@@ -10,8 +10,7 @@ class Server
 
   attr_accessor :host, :port
 
-  def initialize host: 'localhost', port: 3123,
-                 handler: nil
+  def initialize(host: 'localhost', port: 3123, handler: nil)
 
     @Handler = handler
     @host = host
@@ -20,7 +19,7 @@ class Server
     @connections = {}
     @tcp_server = TCPServer.new host, port
     register_monitor @tcp_server, :r do |monitor|
-      handle_socket_connect @server.accept
+      handle_socket_connect @tcp_server.accept
     end
   end
 
@@ -28,17 +27,25 @@ class Server
     cycle_selector
     cycle_connection_queues
     cycle_inbound
+    cycle_handlers
   end
 
   private
 
+  def cycle_handlers
+    @connections.each { |k, (i,o,h)| h.cycle }
+  end
+
   def cycle_inbound
-    handle_new_message >>
+    handle_new_message pop
   end
 
   def cycle_connection_queues
     @connections.each do |conn_id, (in_queue, out_queue)|
-      handle_new_data conn_id, out_queue.deq(true)
+      begin
+        handle_new_data conn_id, out_queue.deq(true)
+      rescue ThreadError
+      end
     end
   end
 
@@ -47,29 +54,29 @@ class Server
   end
 
   def create_handler socket
-    conn_id = socket.id
+    conn_id = socket.object_id
     return unless @connections[conn_id].nil?
     # TODO: not ref Queue directly
     in_queue = Queue.new
     out_queue = Queue.new
-    handler.new(socket).bind_queues data_in, data_queue
-    @connections[conn_id] = [in_queue, out_queue]
+    h = handler(socket)
+    h.bind_queues in_queue, out_queue
+    @connections[conn_id] = [in_queue, out_queue, h]
   end
 
-  def handler *args, **kwargs, &block
-    @Handler.new @selector, *args, **kwargs, block
+  def handler socket
+    @Handler.new socket
   end
 
   def handle_new_data conn_id, data
     return if data.nil?
-    << :conn_id => conn_id, :data => data
+    push :conn_id => conn_id, :data => data
   end
 
   def handle_new_message message
     return if message.nil?
-    handler_in_queue
-    @connections[message[:conn_id]][1] << :conn_id => message[:conn_id],
-                                          :data => message[:data]
+    @connections[message[:conn_id]][1] << { :conn_id => message[:conn_id],
+                                            :data => message[:data] }
   end
 
 end

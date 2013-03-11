@@ -8,15 +8,22 @@ class Handler
 
   def initialize socket
     @socket = socket
-    register_monitor @socket, :r {|m| read }
+    register_monitor @socket, :r do |m|
+      read
+    end
   end
 
   def cycle
     cycle_data_in
+    cycle_data_out
   end
 
   def cycle_data_in
-    write >>
+    read
+  end
+
+  def cycle_data_out
+    write pop
   end
 
   def socket
@@ -24,12 +31,18 @@ class Handler
   end
 
   def read
-    data = @socket.read_nonblock 4096
-    << data unless data.nil?
+    begin
+      # raises ex if no data to read
+      data = @socket.read_nonblock 4096
+      puts "READ: #{data}"
+      push data
+    rescue
+    end
   end
 
   def write data
     return if data.nil?
+    puts "HANDLER write: #{data}"
     @socket.write_nonblock data
   end
 

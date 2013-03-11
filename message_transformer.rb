@@ -4,22 +4,23 @@ class MessageTransformer
 
   include Messenger
 
-  def initialize transformer
+  def initialize &transformer
     @transformer = transformer
   end
 
   def cycle
-    handle_data_in >>
+    handle_data_in pop
   end
 
   def handle_data_in data
-    << transform data
+    return if data.nil?
+    push transform data
   end
 
   private
 
   def transform data
-    @transform.call data
+    @transformer.call data
   end
 
 end

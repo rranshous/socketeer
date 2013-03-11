@@ -10,16 +10,16 @@ class MessageCollator
   end
 
   def cycle
-    handle_data_in >>
+    handle_data_in pop
   end
 
   def handle_data_in data
     return if data.nil?
     @buffer += data
-    next unless data.include? DELIM
+    return unless data.include? DELIM
     @buffer, *messages_data = @buffer.split DELIM
     messages_data.each do |message_data|
-      << transform_incoming message_data
+      push message_data
     end
   end
 

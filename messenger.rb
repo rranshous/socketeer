@@ -1,19 +1,28 @@
+require 'thread'
 
 module Messenger
 
-  def bind_queues inqueue=nil, outqueue=nil
-    @inqueue ||= inqueue
-    @outqueue ||= outqueue
+  attr_reader :in_queue, :out_queue
+
+  def bind_queues in_queue=nil, out_queue=nil
+    @in_queue ||= in_queue
+    @out_queue ||= out_queue
   end
 
   private
 
-  def << message
-    @outqueue << message unless @outqueue.nil?
+  def push message
+    return if message.nil?
+    @out_queue << message unless @out_queue.nil?
   end
 
-  def >>
-    @inqueue.deq unless @inqueue.nil?
+  def pop
+    # noblock
+    begin
+      @in_queue.deq true unless @in_queue.nil?
+    rescue ThreadError
+    end
+    nil
   end
 
 end

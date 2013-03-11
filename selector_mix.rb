@@ -2,15 +2,16 @@
 module Selectable
 
   def cycle_selector
-    @selector.select do |hot_monitor|
-      monitor.callback.call hot_monitor
+    @selector.select(0.1) do |monitor|
+      monitor.callback.call monitor
     end
   end
 
   private
 
   def register_monitor obj, mode, &callback
-    monitor = selector.register socket, mode
+    monitor = selector.register obj, mode
+    monitor.class.class_eval { attr_accessor :callback }
     monitor.callback = callback
     monitor
   end
