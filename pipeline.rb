@@ -5,7 +5,6 @@ class Pipeline
     @messengers = messengers
   end
   def cycle
-    puts "PIPE CYCLE"
     @messengers.each_cons(2) do |a, b|
       a.cycle if a.respond_to? 'cycle'
       begin

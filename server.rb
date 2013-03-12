@@ -36,7 +36,7 @@ class Server
   private
 
   def cycle_handlers
-    @connections.each { |k, (i,o,h)| h.cycle }
+    @connections.each {|conn_id, handler| handler.cycle}
   end
 
   def cycle_inbound
@@ -44,9 +44,9 @@ class Server
   end
 
   def cycle_connection_queues
-    @connections.each do |conn_id, (in_queue, out_queue)|
+    @connections.each do |conn_id, handler|
       begin
-        handle_new_data conn_id, out_queue.deq(true)
+        handle_new_data conn_id, handler.out_queue.deq(true)
       rescue ThreadError
       end
     end
@@ -60,11 +60,9 @@ class Server
     conn_id = socket.object_id
     return unless @connections[conn_id].nil?
     # TODO: not ref Queue directly
-    in_queue = Queue.new
-    out_queue = Queue.new
     h = handler(socket)
-    h.bind_queues in_queue, out_queue
-    @connections[conn_id] = [in_queue, out_queue, h]
+    h.bind_queues Queue.new, Queue.new
+    @connections[conn_id] = h
   end
 
   def handler socket
@@ -78,8 +76,7 @@ class Server
 
   def handle_new_message message
     return if message.nil?
-    @connections[message[:conn_id]][1] << { :conn_id => message[:conn_id],
-                                            :data => message[:data] }
+    @connections[message[:conn_id]].in_queue << message[:data]
   end
 
 end
