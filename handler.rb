@@ -45,7 +45,7 @@ class Handler
 
   def write data
     return if data.nil?
-    puts "HANDLER READ: #{data}"
+    puts "HANDLER WRITE: #{data}"
     @socket.write data
   end
 

@@ -7,6 +7,22 @@ require_relative 'message_handler'
 require_relative 'passthrough'
 require_relative 'pipeline'
 
+class PrintingQueue < Queue
+  def << *args
+    r = super *args
+    puts "#{object_id} << #{args} => #{r}"
+    return r
+  end
+
+  def deq *args
+    r = super
+    puts "#{object_id} deq #{args} => #{r}"
+    return r
+  end
+end
+
+IQueue = PrintingQueue
+
 module Socketeer
 
   def bind host, port, &callback
@@ -19,11 +35,11 @@ module Socketeer
     @out_message_transformer = MessageTransformer.new { |d|
       MessagePack.pack(d) + "\n\n"
     }
-    @server.bind_queues Queue.new, Queue.new
-    @collator.bind_queues Queue.new, Queue.new
-    @in_message_transformer.bind_queues Queue.new, Queue.new
-    @out_message_transformer.bind_queues Queue.new, Queue.new
-    @message_handler.bind_queues Queue.new, Queue.new
+    @server.bind_queues IQueue.new, IQueue.new
+    @collator.bind_queues IQueue.new, IQueue.new
+    @in_message_transformer.bind_queues IQueue.new, IQueue.new
+    @out_message_transformer.bind_queues IQueue.new, IQueue.new
+    @message_handler.bind_queues IQueue.new, IQueue.new
     @pipeline = Pipeline.new(@server, 
                              Passthrough.new(:data, @collator),
                              Passthrough.new(:data, @in_message_transformer),
