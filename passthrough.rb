@@ -33,7 +33,6 @@ class Passthrough
       out_message = @messenger.out_queue.deq true
       if out_message
         original_message = @in_flight.shift
-        puts "ORIGINALMESSAGE: #{original_message}"
         original_message[@attr] = out_message
         out_queue << original_message
       end

@@ -19,12 +19,9 @@ class MessageCollator
   def handle_data_in data
     return if data.nil?
     @buffer += data
-    return unless data.include? @deliminator
-    @buffer, *messages_data = @buffer.split @deliminator
-    puts "POSTDELIM:"
-    puts "BUFFER: #{@buffer}"
-    puts "messages_data: #{messages_data}"
-    messages_data.each do |message_data|
+    puts "INITBUFFER: #{@buffer}"
+    while @buffer.include? @deliminator
+      message_data, _, @buffer = @buffer.partition @deliminator
       push message_data
     end
   end
