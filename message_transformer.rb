@@ -2,6 +2,9 @@ require_relative 'messenger'
 
 class MessageTransformer
 
+  # PUSHES : transformed data (objs)
+  # PULLS  : raw data (String)
+
   include Messenger
 
   def initialize &transformer

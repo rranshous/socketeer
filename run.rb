@@ -4,6 +4,8 @@ require_relative 'handler'
 require_relative 'message_transformer'
 require_relative 'message_collator'
 require_relative 'message_handler'
+require_relative 'passthrough'
+require_relative 'pipeline'
 
 message_handler = MessageHandler.new
 server = Server.new host: 'localhost', port: 3123, handler: Handler
@@ -16,22 +18,7 @@ in_message_transformer.bind_queues Queue.new, Queue.new
 out_message_transformer.bind_queues Queue.new, Queue.new
 message_handler.bind_queues Queue.new, Queue.new
 
-class Pipeline
-  def initialize *messengers
-    @messengers = messengers
-  end
-  def cycle
-    @messengers.each_cons(2) do |a, b|
-      a.cycle if a.respond_to? 'cycle'
-      begin
-        m = a.out_queue.deq true
-        puts "#{a} => #{b} == #{m}"
-        b.in_queue << m
-      rescue ThreadError
-      end
-    end
-  end
-end
+
 
 # server will push out of it's queue hashes
 # containing the `conn_id` and the data it's received
@@ -52,8 +39,12 @@ end
 # back through the transformer
 # from the transformer back to the server
 
-pipeline = Pipeline.new server, collator, in_message_transformer, 
-                        message_handler, out_message_transformer, server
+pipeline = Pipeline.new(server, 
+                        Passthrough.new(:data, collator),
+                        Passthrough.new(:data, in_message_transformer),
+                        message_handler, 
+                        Passthrough.new(:data, out_message_transformer),
+                        server)
 
 loop do 
   pipeline.cycle

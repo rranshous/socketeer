@@ -5,6 +5,9 @@ require_relative 'messenger'
 
 class Server
 
+  # PUSHES : {:conn_id, :data}
+  # PULLS  : {:conn_id, :data}
+
   include Selectable
   include Messenger
 

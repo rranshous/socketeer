@@ -3,6 +3,9 @@ require_relative 'messenger'
 
 class Handler
 
+  # PUSHES : raw received data
+  # PULLS  : raw to send data
+
   include Selectable
   include Messenger
 

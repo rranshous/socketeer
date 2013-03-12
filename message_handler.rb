@@ -2,6 +2,9 @@ require_relative 'messenger'
 
 class MessageHandler
 
+  # PUSHES : 
+  # PULLS  : 
+
   include Messenger
 
   def cycle
