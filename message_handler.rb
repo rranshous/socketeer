@@ -7,9 +7,13 @@ class MessageHandler
 
   include Messenger
 
+  def initialize &handler
+    @handler = handler
+  end
+
   def cycle
-    m = pop
-    puts "MessageHandler message: #{m}" unless m.nil?
-    push m
+    in_message = pop
+    out_message = @handler.call in_message unless in_message.nil?
+    push out_message
   end
 end

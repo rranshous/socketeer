@@ -20,6 +20,7 @@ class Server
     @port = port
 
     @connections = {}
+    puts "BINDING: #{host}:#{port}"
     @tcp_server = TCPServer.new host, port
     register_monitor @tcp_server, :r do |monitor|
       handle_socket_connect @tcp_server.accept

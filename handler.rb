@@ -37,7 +37,7 @@ class Handler
     begin
       # raises ex if no data to read
       data = @socket.read_nonblock 4096
-      puts "READ: #{data}"
+      puts "HANDLER READ: #{data}"
       push data
     rescue
     end
@@ -45,8 +45,8 @@ class Handler
 
   def write data
     return if data.nil?
-    puts "HANDLER write: #{data}"
-    @socket.write_nonblock data
+    puts "HANDLER READ: #{data}"
+    @socket.write data
   end
 
 end

@@ -19,7 +19,6 @@ class MessageCollator
   def handle_data_in data
     return if data.nil?
     @buffer += data
-    puts "INITBUFFER: #{@buffer}"
     while @buffer.include? @deliminator
       message_data, _, @buffer = @buffer.partition @deliminator
       push message_data
