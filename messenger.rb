@@ -13,13 +13,13 @@ module Messenger
 
   def push message
     return if message.nil?
-    @out_queue << message unless @out_queue.nil?
+    out_queue << message unless out_queue.nil?
   end
 
   def pop
     # noblock
     begin
-      @in_queue.deq true unless @in_queue.nil?
+      return in_queue.deq true unless in_queue.nil?
     rescue ThreadError
     end
     nil
