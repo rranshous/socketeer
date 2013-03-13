@@ -60,7 +60,6 @@ Thread.new do
       s1.write in2
     rescue 
     end
-    sleep 1
   end
 
 end
@@ -68,3 +67,5 @@ end
 loop do
   sleep 1
 end
+
+
