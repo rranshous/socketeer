@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.description = "simple socket server for doing message passing"
   s.authors     = ["Robby Ranshous"]
   s.email       = "rranshous@gmail.com"
-  s.files       = Dir.glob("{lib}/*")
+  s.files       = Dir.glob("{lib}/**/*")
   s.homepage    = 'http://kevy.com'
   s.require_paths = ["lib"]
 
