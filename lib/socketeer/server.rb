@@ -13,7 +13,7 @@ class Server
 
   attr_accessor :host, :port
 
-  def initialize(host: 'localhost', port: 3123, handler: nil)
+  def initialize host='localhost', port=3123, handler=nil
 
     @Handler = handler
     @host = host
@@ -41,7 +41,7 @@ class Server
   end
 
   def cycle_inbound
-    handle_new_message pop
+    handle_new_message pop_message
   end
 
   def cycle_connection_queues
@@ -54,25 +54,27 @@ class Server
   end
 
   def handle_socket_connect socket
-    create_handler socket
+    handler = create_handler socket
+    return handler.conn_id
   end
 
   def create_handler socket
-    conn_id = socket.object_id
+    conn_id = get_conn_id socket
     return unless @connections[conn_id].nil?
+    handler = @Handler.new socket, conn_id
     # TODO: not ref Queue directly
-    h = handler(socket)
-    h.bind_queues Queue.new, Queue.new
-    @connections[conn_id] = h
+    handler.bind_queues Queue.new, Queue.new
+    @connections[conn_id] = handler
+    return handler
   end
 
-  def handler socket
-    @Handler.new socket
+  def get_conn_id socket
+    socket.object_id
   end
 
   def handle_new_data conn_id, data
     return if data.nil?
-    push :conn_id => conn_id, :data => data
+    push_message :conn_id => conn_id, :data => data
   end
 
   def handle_new_message message

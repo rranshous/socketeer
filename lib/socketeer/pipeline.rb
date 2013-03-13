@@ -9,7 +9,6 @@ class Pipeline
       a.cycle if a.respond_to? 'cycle'
       begin
         m = a.out_queue.deq true
-        puts "#{a} => #{b} == #{m}"
         b.in_queue << m
       rescue ThreadError
       end

@@ -11,12 +11,12 @@ module Messenger
 
   private
 
-  def push message
+  def push_message message
     return if message.nil?
     out_queue << message unless out_queue.nil?
   end
 
-  def pop
+  def pop_message
     # noblock
     begin
       return in_queue.deq true unless in_queue.nil?

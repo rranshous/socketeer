@@ -12,8 +12,8 @@ class MessageHandler
   end
 
   def cycle
-    in_message = pop
+    in_message = pop_message
     out_message = @handler.call in_message unless in_message.nil?
-    push out_message
+    push_message out_message
   end
 end

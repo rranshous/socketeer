@@ -13,7 +13,7 @@ class MessageCollator
   end
 
   def cycle
-    handle_data_in pop
+    handle_data_in pop_message
   end
 
   def handle_data_in data
@@ -21,7 +21,7 @@ class MessageCollator
     @buffer += data
     while @buffer.include? @deliminator
       message_data, _, @buffer = @buffer.partition @deliminator
-      push message_data
+      push_message message_data
     end
   end
 end

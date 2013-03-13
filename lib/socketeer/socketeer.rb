@@ -10,18 +10,16 @@ require_relative 'pipeline'
 class PrintingQueue < Queue
   def << *args
     r = super *args
-    puts "#{object_id} << #{args} => #{r}"
     return r
   end
 
   def deq *args
     r = super
-    puts "#{object_id} deq #{args} => #{r}"
     return r
   end
 end
 
-IQueue = PrintingQueue
+IQueue = Queue
 
 module Socketeer
 
@@ -29,7 +27,7 @@ module Socketeer
     # will use the passed callback if provided, else calls handle_message
     callback ||= proc { |m| handle_message m }
     @message_handler = MessageHandler.new &callback 
-    @server = Server.new host: host, port: port, handler: Handler
+    @server = Server.new host, port, Handler
     @collator = MessageCollator.new "\n\n"
     @in_message_transformer = MessageTransformer.new {|d| MessagePack.unpack d }
     @out_message_transformer = MessageTransformer.new { |d|
@@ -55,6 +53,15 @@ module Socketeer
   private
 
   def handle_message message
+  end
+
+  def send_message conn_id, message
+    @message_handler.out_queue << { conn_id: conn_id,
+                                    data: data }
+  end
+
+  def register_socket socket
+    handle_socket_connect socket
   end
 
 end

@@ -9,8 +9,11 @@ class Handler
   include Selectable
   include Messenger
 
-  def initialize socket
+  attr_reader :conn_id
+
+  def initialize socket, conn_id
     @socket = socket
+    @conn_id = conn_id
     register_monitor @socket, :r do |m|
       read
     end
@@ -26,7 +29,7 @@ class Handler
   end
 
   def cycle_data_out
-    write pop
+    write pop_message
   end
 
   def socket
@@ -38,7 +41,7 @@ class Handler
       # raises ex if no data to read
       data = @socket.read_nonblock 4096
       puts "HANDLER READ: #{data}"
-      push data
+      push_message data
     rescue
     end
   end

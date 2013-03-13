@@ -12,12 +12,12 @@ class MessageTransformer
   end
 
   def cycle
-    handle_data_in pop
+    handle_data_in pop_message
   end
 
   def handle_data_in data
     return if data.nil?
-    push transform data
+    push_message transform data
   end
 
   private
