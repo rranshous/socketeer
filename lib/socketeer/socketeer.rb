@@ -58,7 +58,7 @@ module Socketeer
 
   def send_message conn_id, message
     @message_handler.out_queue << { conn_id: conn_id,
-                                    data: data }
+                                    data: message }
   end
 
   def register_socket socket
