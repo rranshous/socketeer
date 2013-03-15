@@ -62,7 +62,9 @@ module Socketeer
   end
 
   def register_socket socket
-    @server.handle_socket_connect socket
+    @server.instance_eval do
+      handle_socket_connect socket
+    end
   end
 
 end
