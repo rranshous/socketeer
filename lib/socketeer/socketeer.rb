@@ -23,6 +23,8 @@ IQueue = Queue
 
 module Socketeer
 
+  attr_reader :host, :port
+
   def bind host, port, &callback
     # will use the passed callback if provided, else calls handle_message
     callback ||= proc { |m| handle_message m }
