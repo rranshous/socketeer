@@ -23,8 +23,6 @@ IQueue = Queue
 
 module Socketeer
 
-  attr_reader :host, :port
-
   def bind host, port, &callback
     # will use the passed callback if provided, else calls handle_message
     callback ||= proc { |m| handle_message m }
@@ -46,6 +44,7 @@ module Socketeer
                              @message_handler, 
                              Passthrough.new(:data, @out_message_transformer),
                              @server)
+    [host, port]
   end
 
   def cycle
