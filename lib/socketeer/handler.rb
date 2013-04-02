@@ -39,10 +39,14 @@ class Handler
   def read
     begin
       # raises ex if no data to read
-      data = @socket.read_nonblock 4096
-      push_message data
+      data = ''
+      loop do
+        data << @socket.read_nonblock(4096)
+      end
     rescue
+      # no more datas
     end
+    push_message data unless data.empty?
   end
 
   def write data
