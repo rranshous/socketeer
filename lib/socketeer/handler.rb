@@ -40,7 +40,6 @@ class Handler
     begin
       # raises ex if no data to read
       data = @socket.read_nonblock 4096
-      puts "HANDLER READ: #{data}"
       push_message data
     rescue
     end
@@ -48,7 +47,6 @@ class Handler
 
   def write data
     return if data.nil?
-    puts "HANDLER WRITE: #{data}"
     @socket.write data
   end
 

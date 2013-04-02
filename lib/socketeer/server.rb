@@ -79,7 +79,11 @@ class Server
 
   def handle_new_message message
     return if message.nil?
-    @connections[message[:conn_id]].in_queue << message[:data]
+    unless message[:conn_id].nil?
+      @connections[message[:conn_id]].in_queue << message[:data]
+    else
+      @connections.each { |c| c.in_queue << message[:data] }
+    end
   end
 
 end
