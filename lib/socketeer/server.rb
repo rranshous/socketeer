@@ -82,7 +82,7 @@ class Server
     unless message[:conn_id].nil?
       @connections[message[:conn_id]].in_queue << message[:data]
     else
-      @connections.each { |c| c.in_queue << message[:data] }
+      @connections.each { |_, c| c.in_queue << message[:data] }
     end
   end
 
