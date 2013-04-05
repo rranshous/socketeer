@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'socketeer'
-  s.version     = '0.0.12'
+  s.version     = '0.0.13'
   s.date        = '2013-03-10'
   s.summary     = "simple socket server"
   s.description = "simple socket server for doing message passing"

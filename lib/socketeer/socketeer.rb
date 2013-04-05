@@ -19,7 +19,8 @@ class PrintingQueue < Queue
   end
 end
 
-IQueue = Queue
+class IQueue < Queue
+end
 
 module Socketeer
 
