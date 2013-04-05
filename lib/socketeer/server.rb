@@ -41,13 +41,20 @@ class Server
   end
 
   def cycle_inbound
-    handle_new_message pop_message
+    1000.times do
+      msg = pop_message
+      return if msg.nil?
+      handle_new_message msg
+    end
   end
 
   def cycle_connection_queues
     @connections.each do |conn_id, handler|
+      # dont get backed up here
       begin
-        handle_new_data conn_id, handler.out_queue.deq(true)
+        1000.times do
+          handle_new_data conn_id, handler.out_queue.deq(true)
+        end
       rescue ThreadError
       end
     end
