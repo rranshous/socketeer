@@ -29,7 +29,11 @@ class Handler
   end
 
   def cycle_data_out
-    write pop_message
+    1000.times do
+      m = pop_message
+      write m
+      return if m.nil?
+    end
   end
 
   def socket
