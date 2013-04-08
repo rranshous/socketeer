@@ -55,7 +55,7 @@ class Handler
 
   def write data
     return if data.nil?
-    @socket.write data
+    @socket.write data rescue false
   end
 
 end
